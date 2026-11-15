@@ -4,6 +4,8 @@
 
 Un mod pour Claude Code dans le terminal : il indique quand chaque réponse est arrivée et quelle part du contexte et des limites de votre abonnement est utilisée.
 
+![pulse : l’heure sous chaque réponse, l’anneau de contexte et le panneau de consommation](assets/screenshot.png)
+
 - **L’heure sous chaque réponse.** Un bouton `◷ 14:32` sous le dernier texte de chaque réponse. Un clic affiche les secondes, la date, la durée de la réponse et le remplissage du contexte à ce moment-là.
 - **Anneau de contexte dans la barre d’état.** `○ ◔ ◑ ◕ ●` avec un pourcentage, à droite de la ligne du bas. Un clic ouvre le panneau **Consommation** :
   - les limites de l’abonnement (5 heures, semaine) avec le temps restant avant chaque réinitialisation ;

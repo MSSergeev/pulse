@@ -4,6 +4,8 @@
 
 Un mod para Claude Code en la terminal que muestra cuándo llegó cada respuesta y cuánto contexto y cuánto de los límites de tu suscripción llevas usado.
 
+![pulse: la hora bajo cada respuesta, el anillo de contexto y el panel de uso](assets/screenshot.png)
+
 - **La hora bajo cada respuesta.** Un botón `◷ 14:32` bajo el último texto de cada respuesta. Al pulsarlo muestra los segundos, la fecha, cuánto tardó la respuesta y cómo de lleno estaba el contexto en ese momento.
 - **Anillo de contexto en la barra de estado.** `○ ◔ ◑ ◕ ●` con un porcentaje, a la derecha de la línea inferior. Al pulsarlo se abre el panel **Uso**:
   - límites de la suscripción (5 horas, semana) con el tiempo que falta para cada reinicio;

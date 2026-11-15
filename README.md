@@ -4,6 +4,8 @@
 
 A mod for Claude Code in the terminal that shows when each reply came and how much of your context and subscription limits is used.
 
+![pulse: time under every reply, the context ring and the Usage pane](assets/screenshot.png)
+
 - **Time under every reply.** A `◷ 14:32` chip under the last text of each reply. Click it for the seconds, the date, how long the reply took and how full the context was at that moment.
 - **Context ring in the status line.** `○ ◔ ◑ ◕ ●` with a percentage, on the right of the bottom line. Click it to open the **Usage** pane:
   - subscription limits (5 hours, week) with the time left until each resets;
@@ -41,7 +43,3 @@ English, Spanish, French and Russian. The install asks for one; change it later 
 
 - Claude Code with mod support (checked on 2.1.299 and later).
 - `python3`, for the session's tokens.
-
----
-
-Found a mistake in a translation? Open an issue or a pull request.
