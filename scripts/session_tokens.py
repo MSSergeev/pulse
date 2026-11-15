@@ -1,11 +1,11 @@
-"""Токены сессии по её транскриптам: итог и вес каждого источника (основной диалог, типы субагентов).
+"""A session's tokens from its transcripts: the total and the weight of each source (main conversation, subagent types).
 
-Ответ модели пишется в транскрипт несколькими строками с одним message.id и одинаковым
-usage, поэтому берём последнюю строку каждого id.
+A model reply is written to the transcript as several rows with one message.id and the same
+usage, so the last row of each id is taken.
 
-Допущение: расход лимита подписки пропорционален цене по API. Веса — соотношения цен
-Anthropic для моделей Claude 4 (вывод ×5 к вводу, чтение кэша ×0.1, запись ×1.25);
-цену самой модели не учитываем. Пересмотреть, если Anthropic опубликует, как считается лимит.
+Assumption: subscription limit use is proportional to API price. The weights are Anthropic's
+price ratios for Claude 4 models (output ×5 input, cache read ×0.1, cache write ×1.25); the
+model's own price is left out. Revisit if Anthropic publishes how the limit is counted.
 """
 
 import glob
@@ -15,7 +15,7 @@ import sys
 
 KEYS = ("input_tokens", "output_tokens", "cache_read_input_tokens", "cache_creation_input_tokens")
 WEIGHTS = (1.0, 5.0, 0.1, 1.25)
-MAIN = "@main"  # служебные имена: переводит мод (hooks/i18n.ts)
+MAIN = "@main"  # reserved names: the mod translates them (hooks/i18n.ts)
 SUBAGENT = "@subagent"
 
 

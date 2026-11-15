@@ -9,18 +9,18 @@ const answers = atom({ plugin: 'pulse', key: 'answers' } as const, {})
 const isOpen = atom({ plugin: 'pulse', key: 'isOpen' } as const, false)
 const offsetMin = atom({ plugin: 'pulse', key: 'offsetMin' } as const, 0)
 const usage = atom({ plugin: 'pulse', key: 'usage' } as const, null)
-// Метка формата: значение прежнего вида (без `by`) после перезагрузки мода отбрасывается.
+// Shape label: a value of the old form (without `by`) is dropped when the mod reloads.
 const tokens = atom({ plugin: 'pulse', key: 'tokens' } as const, null, { shape: 'by-source' })
 const breakdown = atom({ plugin: 'pulse', key: 'breakdown' } as const, null)
 const isTokensShown = atom({ plugin: 'pulse', key: 'isTokensShown' } as const, false)
 const isContextShown = atom({ plugin: 'pulse', key: 'isContextShown' } as const, false)
-// Последний текстовый блок главного цикла за ход — это и есть ответ. В состоянии, а не в
-// переменной модуля: мод может перезагрузиться посреди хода.
+// The main loop's last text block in a turn is the reply. Kept in state, not in a module
+// variable: the mod can reload in the middle of a turn.
 const lastText = atom({ plugin: 'pulse', key: 'lastText' } as const, null)
 const isSourcesShown = atom({ plugin: 'pulse', key: 'isSourcesShown' } as const, false)
-// Язык интерфейса: выбор из настроек мода или, при `auto`, определённый в session.start.
+// Interface language: the mod's option, or with `auto` the one found in session.start.
 const lang = atom({ plugin: 'pulse', key: 'lang' } as const, 'en')
-// Минутный тик: панель перерисовывается, и «осталось до сброса» не устаревает между ответами.
+// A tick every minute redraws the pane, so "time left until reset" stays fresh between replies.
 const tick = atom({ plugin: 'pulse', key: 'tick' } as const, 0)
 
 const PANE = 'usage'
@@ -120,7 +120,7 @@ export const register: Register = (on, options) => {
     )
   })
 
-  // Колечко справа в нижней строке; в приложении для компьютера есть своё.
+  // The ring on the right of the bottom line; the desktop app has its own.
   on('ui.render', { component: 'SessionMode' }, async ($, e, next) => {
     if (e.surface !== 'terminal') return next(e)
 
@@ -278,8 +278,8 @@ export const register: Register = (on, options) => {
   })
 }
 
-// Выбор в настройках мода; при `auto` — язык ответов Claude Code (настройка `language`),
-// затем язык системы (LC_ALL, LC_MESSAGES, LANG), затем английский.
+// The mod's option; with `auto`, Claude Code's response language (the `language` setting),
+// then the system language (LC_ALL, LC_MESSAGES, LANG), then English.
 async function pickLang($: EngineInterface, chosen: unknown): Promise<Lang> {
   if (typeof chosen === 'string' && (LANGS as readonly string[]).includes(chosen)) return chosen as Lang
   const setting = await $.settings.read({ key: 'language' }).catch(() => undefined)
@@ -292,7 +292,7 @@ async function pickLang($: EngineInterface, chosen: unknown): Promise<Lang> {
   return found ?? 'en'
 }
 
-// Скрипт называет основной диалог и субагент без типа служебными именами.
+// The script names the main conversation and an untyped subagent with reserved names.
 const sourceName = (t: Strings, name: string) => (name === '@main' ? t.main : name === '@subagent' ? t.subagent : name)
 
 async function togglePane($: EngineInterface) {
@@ -301,7 +301,7 @@ async function togglePane($: EngineInterface) {
   else await $.ui.open({ id: PANE, title: STRINGS[await read($, lang)].paneTitle, closeOnEscape: true })
 }
 
-// `summary` считает локально и не шлёт запросов; `full` шлёт запросы подсчёта токенов, как /context.
+// `summary` counts locally and sends nothing; `full` sends token-count requests, as /context does.
 async function refreshBreakdown($: EngineInterface) {
   const found = (await $.session.usage({ breakdown: 'summary' })).context.breakdown
   if (found === undefined) return
@@ -316,7 +316,7 @@ async function refreshBreakdown($: EngineInterface) {
   await update($, breakdown, () => parts)
 }
 
-// Транскрипт бывает больше 4 МБ — предела $.fs.read, поэтому считает скрипт.
+// A transcript can exceed 4 MB, the limit of $.fs.read, so a script does the counting.
 async function refreshTokens($: EngineInterface) {
   const script = `${$.plugin.root}/scripts/session_tokens.py`
   const ran = await $.process.run(['python3', '-I', script, await $.session.id()])
@@ -328,9 +328,9 @@ async function refreshTokens($: EngineInterface) {
   await update($, tokens, () => ({ input, output, cacheRead, cacheWrite, by }))
 }
 
-// Ответ рисуется то под uuid строки транскрипта, то под производным id: первые четыре
-// группы те же, последняя — номер блока (`…-000000000000`). Поэтому ключ — первые
-// четыре группы (замечено 2026-10-15, Claude Code 2.1.299).
+// A reply is drawn under either its transcript row's uuid or a derived id: the first four
+// groups match, the last is a block number (`…-000000000000`). So the key is the first
+// four groups (seen 2026-10-15, Claude Code 2.1.299).
 const rowKey = (id: string) => id.slice(0, 23)
 
 function newest(all: Record<string, Answer>): Record<string, Answer> {
@@ -341,8 +341,8 @@ function newest(all: Record<string, Answer>): Record<string, Answer> {
   )
 }
 
-// Среда модов может не знать часового пояса машины: смещение берём у `date +%z`
-// и местное время читаем из UTC-полей сдвинутой даты.
+// The mod runtime may not know the machine's time zone: the offset comes from `date +%z`,
+// and local time is read from the UTC fields of the shifted date.
 function parseOffset(z: string): number | undefined {
   const m = /^([+-])(\d\d)(\d\d)$/.exec(z.trim())
   if (m === null) return undefined
@@ -381,8 +381,8 @@ function resetLabel(t: Strings, limit: SessionRateLimit, offset: number, nowMs: 
   return at > nowMs ? `${when} · ${t.inTime(remaining(t, at - nowMs))}` : when
 }
 
-// До сброса: «2 ч 15 мин», «3 д 5 ч 12 мин», «42 мин»; минуты округляются вверх,
-// чтобы не показать «0 мин», пока сброс ещё не наступил.
+// Time left: "2 h 15 min", "3 d 5 h 12 min", "42 min"; minutes round up, so "0 min"
+// never shows before the reset has come.
 function remaining(t: Strings, ms: number): string {
   const { d: D, h: H, min: M } = t.units
   const total = Math.max(1, Math.ceil(ms / 60_000))
@@ -394,7 +394,7 @@ function remaining(t: Strings, ms: number): string {
   return parts.filter(p => p !== '').join(' ')
 }
 
-// Тонкая полоска с шагом в полклетки: ╸ — левая половина жирной линии.
+// A thin bar in half-cell steps: ╸ is the left half of a heavy line.
 function fill(share: number, width: number): string {
   const halves = Math.round(Math.max(0, Math.min(1, share)) * width * 2)
 

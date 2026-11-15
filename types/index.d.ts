@@ -4,7 +4,7 @@ export type Tokens = {
   output: number
   cacheRead: number
   cacheWrite: number
-  // Вес источника — оценка его доли в расходе лимита (см. scripts/session_tokens.py).
+  // A source's weight estimates its share of the limit spent (see scripts/session_tokens.py).
   by: { name: string; weight: number }[]
 }
 export type Category = { name: string; tokens: number; color: string; kind: string }

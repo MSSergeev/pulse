@@ -1,9 +1,9 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
 
-// 2026-10-14 11:32:05 UTC — среда; машина в UTC+3.
+// 2026-10-14 11:32:05 UTC is a Wednesday; the machine is at UTC+3.
 const ROW = '2f836e48-04ed-4753-b7b3-259ce359e6ef'
-// Так Claude Code иногда называет нарисованный блок той же строки.
+// How Claude Code sometimes names the drawn block of the same row.
 const DRAWN = '2f836e48-04ed-4753-b7b3-000000000000'
 const NARRATION = '4f6289c9-4dea-4395-b466-22a386f11e8b'
 const NOW = Date.UTC(2026, 9, 14, 11, 32, 5)
@@ -52,7 +52,7 @@ function world(on: On) {
   on('session.measure', ($, e) => ({ changed: e.changed }))
   on('turn.complete', ($, e) => ({ text: e.answer }))
   on('ui.status', () => ({ value: undefined }))
-  // Вместо движка: его собственный рисунок.
+  // Standing in for the engine: its own drawing.
   on('ui.render', ($, e) => {
     const { Text } = $.ui.resolve(e)
     return Text({ children: e.component })
@@ -135,7 +135,7 @@ test('the ring opens the usage pane, which breaks the context down', RU, async (
   expect(await pane.find({ text: 'основной диалог' })).toBeDefined()
 })
 
-// Ответ из первого теста: время, дата, длительность и контекст на каждом языке.
+// The reply from the first test: time, date, duration and context in each language.
 async function chip($: Parameters<Parameters<typeof test>[1]>[0]) {
   await $.session.start({ cwd: '/', surface: 'terminal', isInteractive: true })
   await $.session.append({
