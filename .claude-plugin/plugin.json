@@ -1,0 +1,22 @@
+{
+  "name": "pulse",
+  "version": "0.2.0",
+  "description": "Time of every reply (a chip under it) and a status-line ring with context and subscription limits",
+  "license": "MIT",
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "language": {
+      "type": "string",
+      "title": "Language",
+      "description": "Interface language: auto (Claude Code's language setting, then the system locale), en, es, fr or ru",
+      "options": [
+        "auto",
+        "en",
+        "es",
+        "fr",
+        "ru"
+      ],
+      "default": "auto"
+    }
+  }
+}
